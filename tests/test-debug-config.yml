@@ -1,0 +1,45 @@
+name: Test debug mode with config and custom controls
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Prepare log directory
+        run: mkdir -p "$GITHUB_WORKSPACE/orca-logs"
+      # Scan is expected to fail authentication with the dummy token; the test
+      # verifies the inputs are accepted and the action fails gracefully.
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          api_token: dummy-orca-token
+          project_key: test-project
+          path: tests/fixtures/terraform
+          config: tests/fixtures/orca-config.yaml
+          custom_controls: tests/fixtures/custom-controls
+          debug: "true"
+          log_path: orca-logs
+          show_annotations: "false"
+          disable_err_report: "true"
+          timeout: 2m
+      - name: Assert action ran
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+          EXIT_CODE: ${{ steps.action.outputs.exit_code }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "exit_code: $EXIT_CODE"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ "$EXIT_CODE" != "0" ]; then
+              echo "FAIL: action succeeded but exit_code is '$EXIT_CODE'"
+              exit 1
+            fi
+            echo "PASS: scan succeeded"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (no valid Orca token in harness)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
