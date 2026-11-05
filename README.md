@@ -8,6 +8,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit | Hardening report |
 |---------|-----|-----------------|------------------|
+| v.1.5.12 | [`v.1.5.12`](https://github.com/chainguard-actions/orcasecurity-shiftleft-iac-action/tree/v.1.5.12) | [`f171681`](https://github.com/orcasecurity/shiftleft-iac-action/commit/f171681da633548da011fa984c13b84f14744352) | [`HARDENING.md`](https://github.com/chainguard-actions/orcasecurity-shiftleft-iac-action/blob/v.1.5.12/HARDENING.md) |
 | v1.5.11 | [`v1.5.11`](https://github.com/chainguard-actions/orcasecurity-shiftleft-iac-action/tree/v1.5.11) | [`24019ed`](https://github.com/orcasecurity/shiftleft-iac-action/commit/24019ededfe4c26fbc7ea8af291624ff811f732e) | [`HARDENING.md`](https://github.com/chainguard-actions/orcasecurity-shiftleft-iac-action/blob/v1.5.11/HARDENING.md) |
 
 ## Privacy
