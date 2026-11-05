@@ -1,0 +1,41 @@
+name: Test scan runs with dummy token
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          api_token: dummy-orca-token
+          project_key: test-project
+          path: tests/fixtures/terraform
+          no_color: "true"
+          disable_err_report: "true"
+          show_annotations: "false"
+      - name: Assert outcome is consistent with exit_code
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+          EXIT_CODE: ${{ steps.action.outputs.exit_code }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "exit_code: $EXIT_CODE"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ "$EXIT_CODE" != "0" ]; then
+              echo "FAIL: success but exit_code is '$EXIT_CODE'"
+              exit 1
+            fi
+            echo "PASS: scan succeeded"
+          elif [ "$OUTCOME" = "failure" ]; then
+            if [ "$EXIT_CODE" = "0" ]; then
+              echo "FAIL: step failed but exit_code output is 0"
+              exit 1
+            fi
+            echo "PASS: scan failed as expected with an invalid Orca token"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
